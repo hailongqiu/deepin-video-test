@@ -35,4 +35,20 @@ ioctl 命令部分:
 14. VIDIOC_STREAMOFF：结束视频显示函数
 15. VIDIOC_QUERYSTD：检查当前视频设备支持的标准，例如PAL或NTSC。
 
+
+
+Video4linux2一般操作流程（视频设备）：
+1. 打开设备文件。 int fd=open(”/dev/video0″,O_RDWR);
+2. 取得设备的capability，看看设备具有什么功能，比如是否具有视频输入等。VIDIOC_QUERYCAP,struct v4l2_capability
+3. 选择视频输入，一个视频设备可以有多个视频输入。VIDIOC_S_INPUT,struct v4l2_input
+4. 设置视频的制式和帧格式，制式包括PAL，NTSC，帧的格式个包括宽度和高度等。
+VIDIOC_S_STD,VIDIOC_S_FMT,struct v4l2_std_id,struct v4l2_format
+5. 向驱动申请帧缓冲，一般不超过5个。struct v4l2_requestbuffers
+6. 将申请到的帧缓冲映射到用户空间，这样就可以直接操作采集到的帧了，而不必去复制。
+7. 将申请到的帧缓冲全部入队列，以便存放采集到的数据.VIDIOC_QBUF,struct v4l2_buffer
+8. 开始视频的采集。VIDIOC_STREAMON
+9. 出队列以取得已采集数据的帧缓冲，取得原始采集数据。VIDIOC_DQBUF
+10. 将缓冲重新入队列尾,这样可以循环采集。VIDIOC_QBUF
+11. 停止视频的采集。VIDIOC_STREAMOFF
+12. 关闭视频设备。close(fd);
     

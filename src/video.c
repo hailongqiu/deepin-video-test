@@ -1,5 +1,13 @@
 #include "video.h"
 
+void buffer_mmap(Video * video, const int index)
+{
+    memset(&video->buffer.query, 0, sizeof(video->buffer.query));
+    video->buffer.query.type = video->buffer.req.type;
+    video->buffer.query.memory = V4L2_MEMORY_MMAP;
+    video->buffer.query.index = index;
+
+}
 
 void buffer_request(Video *video, const int strem_flag)
 {
@@ -17,7 +25,6 @@ void buffer_request(Video *video, const int strem_flag)
     video->buffer.buf = calloc(video->buffer.req.count, 
                             sizeof(video->buffer.buf));
     assert(video->buffer.buf != NULL);
-
 }
 
 void buffer_init(Video *video, const int stream_flag)
@@ -26,9 +33,8 @@ void buffer_init(Video *video, const int stream_flag)
     buffer_request(video, stream_flag);
     for (n_buffer; n_buffer < video->buffer.req.count; n_buffer++)
     {
-        //buffer_mmap
+        buffer_mmap(video, n_buffer);
         //buffer_enqueue
-        //
     }
 }
 

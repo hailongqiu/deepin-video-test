@@ -27,7 +27,8 @@ struct _buffer
 {
     struct v4l2_requestbuffers req; // 请求.
     struct v4l2_buffer query; // 获取.
-    struct {
+    struct // 用于保存mmap的起始地址.
+    { 
         void *start;
         size_t length;
     }*buf;
@@ -41,6 +42,7 @@ struct _video
     Buffer buffer;
 };
 
+void buffer_mmap(Video * video, const int index);
 void buffer_request(Video *video, const int strem_flag);
 void buffer_init(Video *video, const int stream_flag);
 void option_init(Opt *opt); // 初始化 opt.
